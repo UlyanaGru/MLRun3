@@ -63,8 +63,6 @@ class QLearningAgent:
         # Calculate the approximation of value function V(s).
         q_values = [self.get_qvalue(state, action) for action in possible_actions]
         value = np.max(q_values)
-        value = None
-        assert value is not None
 
         return value
 
@@ -145,32 +143,3 @@ class QLearningAgent:
         probabilities = self.get_softmax_policy(state)
         chosen_action = np.random.choice(possible_actions, p=probabilities)
         return chosen_action
-
-
-class EVSarsaAgent(QLearningAgent):
-    """
-    An agent that changes some of q-learning functions to implement Expected Value SARSA.
-    Note: this demo assumes that your implementation of QLearningAgent.update uses get_value(next_state).
-    If it doesn't, please add
-        def update(self, state, action, reward, next_state):
-            and implement it for Expected Value SARSA's V(s')
-    """
-
-    def get_value(self, state):
-        """
-        Returns Vpi for current state under the softmax policy:
-          V_{pi}(s) = sum _{over a_i} {pi(a_i | s) * Q(s, a_i)}
-
-        Hint: all other methods from QLearningAgent are still accessible.
-        """
-        possible_actions = self.get_legal_actions(state)
-        # If there are no legal actions, return 0.0
-        if len(possible_actions) == 0:
-            return 0.0
-
-        # YOUR CODE HERE
-        # Compute the value of the current state under the softmax policy.
-        value = None
-        assert value is not None
-
-        return value
