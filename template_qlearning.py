@@ -112,16 +112,18 @@ class QLearningAgent:
         See the formula in the notebook for more details
         """
         possible_actions = self.get_legal_actions(state)
-        # If there are no legal actions, return None
         if len(possible_actions) == 0:
             return None
-
-        # YOUR CODE HERE
-        # Compute all actions probabilities in the current state using softmax
+        
         q_values = np.array([self.get_qvalue(state, action) for action in possible_actions])
-        probabilities = my_softmax(q_values, self.temp)
-
-        return probabilities
+        
+        # Handle very low temperature (greedy policy)
+        if self.temp < 1e-10:
+            probabilities = np.zeros(len(possible_actions))
+            probabilities[np.argmax(q_values)] = 1.0
+            return probabilities
+        
+        return my_softmax(q_values, self.temp)
 
 
     def get_action(self, state):
@@ -134,12 +136,10 @@ class QLearningAgent:
               and compare it with your probability
         """
         possible_actions = self.get_legal_actions(state)
-        # If there are no legal actions, return None
         if len(possible_actions) == 0:
             return None
-
-        # YOUR CODE HERE
-        # Select the action to take in the current state according to the policy
-        probabilities = self.get_softmax_policy(state)
-        chosen_action = np.random.choice(possible_actions, p=probabilities)
-        return chosen_action
+        
+        q_values = [self.get_qvalue(state, action) for action in possible_actions]
+        max_q = np.max(q_values)
+        best_actions = [action for action, q in zip(possible_actions, q_values) if q == max_q]
+        return random.choice(best_actions)  # Random choice among best actions
